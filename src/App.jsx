@@ -1,23 +1,23 @@
-import { use, useState } from "react";
+import { useState } from "react";
+import { useEffect } from "react";
 import AddTask from "./components/AddTask";
 import Tasks from "./components/Tasks";
 import { v4 } from "uuid";
-import { useEffect } from "react";
 
 export default function App(){
   const [tasks, setTasks] = useState(JSON.parse(localStorage.getItem("tasks")) || []) 
 
   useEffect(() => { // Para operações assincronas é necessário a criação de uma segunda função
-    async function fetchTasks() {
-      const resp = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=10', {
-        method: 'GET'
-      })
-      const data = await resp.json()
+    // async function fetchTasks() {
+    //   const resp = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=10', {
+    //     method: 'GET'
+    //   })
+    //   const data = await resp.json()
 
-      setTasks(data)
-      console.log(data)
-    }
-    fetchTasks()
+    //   setTasks(data)
+    //   console.log(data)
+    // }
+    // fetchTasks()
   }, []) // Com as dependencias vazia, a funcao e realizada uma vez, na hora que o site roda
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function App(){
           isCompleted: !task.isCompleted
         }
       }
-
+      console.log(tasks)
       return task
     })
     setTasks(newTasks)
@@ -40,19 +40,6 @@ export default function App(){
 
   function onDeleteTaskClick(taskId){
     const newTasks = tasks.filter(task => task.id !== taskId)
-    setTasks(newTasks)
-  }
-
-  function OnDescriptionTaskClick(taskId){
-    const newTasks = tasks.map(task => {
-      if(taskId === task.id){
-        return (
-          <dialog>{task.description}</dialog>
-        )
-      }
-      return task
-    })
-
     setTasks(newTasks)
   }
 
@@ -72,7 +59,7 @@ export default function App(){
       <div className="w-[500px] space-y-4">
         <h1 className="text-3xl text-slate-100 font-bold text-center">Gerenciador de tarefas</h1>
         <AddTask onAddTaskClick={onAddTaskClick}/>
-        <Tasks tasks={tasks} onTaskClick={onTaskClick} onDeleteTaskClick={onDeleteTaskClick} OnDescriptionTaskClick={OnDescriptionTaskClick}/>
+        <Tasks tasks={tasks} onTaskClick={onTaskClick} onDeleteTaskClick={onDeleteTaskClick} />
       </div>
     </div>
   )
