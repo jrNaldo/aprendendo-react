@@ -1,28 +1,28 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import AddTask from "./components/AddTask";
 import Tasks from "./components/Tasks";
-import { ChevronRightIcon } from "lucide-react";
+import { v4 } from "uuid";
+import { useEffect } from "react";
 
 export default function App(){
-  const [tasks, setTasks] = useState([
-    { id: 1,
-      title: 'Estudar programação',
-      description: 'Estudar programação para se tornar desenvolvedor full stack. ',
-      isCompleted: false
-    },
-    {
-      id: 2,
-      title: 'Estudar ingles',
-      description: 'Estudar ingles para se tornar desenvolvedor full stack. ',
-      isCompleted: false
-    },
-    {
-      id: 3,
-      title: 'Estudar matematica',
-      description: 'Estudar matematica para se tornar desenvolvedor full stack. ',
-      isCompleted: false
+  const [tasks, setTasks] = useState(JSON.parse(localStorage.getItem("tasks")) || []) 
+
+  useEffect(() => { // Para operações assincronas é necessário a criação de uma segunda função
+    async function fetchTasks() {
+      const resp = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=10', {
+        method: 'GET'
+      })
+      const data = await resp.json()
+
+      setTasks(data)
+      console.log(data)
     }
-  ])
+    fetchTasks()
+  }, []) // Com as dependencias vazia, a funcao e realizada uma vez, na hora que o site roda
+
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks))
+  }, [tasks])
 
   function onTaskClick(taskId) {
     const newTasks = tasks.map(task => {
@@ -56,11 +56,22 @@ export default function App(){
     setTasks(newTasks)
   }
 
+  function onAddTaskClick(title, description){
+    const newTasks = {
+      id: v4(),
+      title,
+      description,
+      isCompleted: false
+    }
+
+    setTasks([...tasks, newTasks])
+  }
+
   return(
-    <div className="w-screen h-screen bg-slate-500 flex justify-center p-6">
+    <div className="w-full h-max min-h-screen bg-slate-500 flex justify-center p-6">
       <div className="w-[500px] space-y-4">
         <h1 className="text-3xl text-slate-100 font-bold text-center">Gerenciador de tarefas</h1>
-        <AddTask />
+        <AddTask onAddTaskClick={onAddTaskClick}/>
         <Tasks tasks={tasks} onTaskClick={onTaskClick} onDeleteTaskClick={onDeleteTaskClick} OnDescriptionTaskClick={OnDescriptionTaskClick}/>
       </div>
     </div>
