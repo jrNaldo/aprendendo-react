@@ -1,4 +1,4 @@
-import { ChevronRightIcon, TrashIcon } from "lucide-react"
+import { CheckIcon, ChevronRightIcon, TrashIcon } from "lucide-react"
 import React from "react"
 import { useNavigate } from "react-router-dom"
 import Button from "./Button"
@@ -16,7 +16,8 @@ export default function Tasks(props) {
         <div>
             <ul className="space-y-4 p-6 bg-slate-200 rounded-md shadow">{props.tasks.map(task => 
                 <li key={task.id} className="flex gap-2">
-                    <Button style={`w-full ${task.isCompleted && "line-through"}`} onClick={() => props.onTaskClick(task.id)}>
+                    <Button style={`w-full flex items-center gap-2 ${task.isCompleted && "line-through"}`} onClick={() => props.onTaskClick(task.id)}>
+                        {task.isCompleted && <CheckIcon />} {/* O If não pode ser usado em renderização condicional*/}
                         {task.title}
                     </Button>
 
